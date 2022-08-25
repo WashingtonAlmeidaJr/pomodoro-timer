@@ -12,6 +12,25 @@ export const HistoryContainer=styled.main`
         color:${props=>props.theme['gray-100']}
     }
 
+    @media (max-width: 768px) {
+        flex:1;    
+        padding:0rem;
+        display:flex;
+        justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    align-content: flex-start;
+    width:100rem
+}
+
+    h1{
+        font-size:1.5rem;
+        color:${props=>props.theme['gray-100']}
+    }
+
+    }
+
 `
 
 export const HistoryList=styled.div`
@@ -81,6 +100,18 @@ gap: 0.5em;
     height:0.5rem;
     border-radius: 9999px;
     background-color: ${props=>props.theme[STATUS_COLOR[props.statusColor]]};
+}
+
+
+@media (max-width: 768px) {
+        flex:1;    
+        padding:0rem;
+        display:flex;
+        justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    align-content: flex-start;
 }
 
     `

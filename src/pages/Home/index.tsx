@@ -45,39 +45,29 @@ const isSubmitDisabled = !task;
 return (
 <HomeContainer>
     <form onSubmit={handleSubmit(handleCreateNewCycle)} action="">
+
         <FormProvider {...newCycleForm}>
         <NewCycleForm />
         </FormProvider>
         <Countdown />
+
+
         {activeCycle ? (
-        <StopCountDownButton type="button" onClick={interruptCurrentCycle}>
-        <HandPalm size={24} />
-        Interromper
-        </StopCountDownButton>
-    ) : (
-        <StartCountDownButton
-        disabled={isSubmitDisabled}
-        type="submit"
-        >
-        <Play size={24} />
-        Começar
-        </StartCountDownButton>
+            <StopCountDownButton type="button" onClick={interruptCurrentCycle}>
+            <HandPalm size={24} />
+            Interromper
+            </StopCountDownButton>
+        ) : (
+            <StartCountDownButton
+            disabled={isSubmitDisabled}
+            type="submit"
+            >
+            <Play size={24} />
+            Começar
+            </StartCountDownButton>
     )}
-    {/* {activeCycle ? (
-        <StopCountDownButton type="button" onClick={interruptCurrentCycle}>
-        <HandPalm size={24} />
-        Interromper
-        </StopCountDownButton>
-    ) : (
-        <StartCountDownButton
-        disabled={isSubmitDisabled}
-        type="submit"
-        >
-        <Play size={24} />
-        Começar
-        </StartCountDownButton>
-    )} */}
     </form>
+
 </HomeContainer>
 );
 }

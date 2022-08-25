@@ -1,4 +1,6 @@
-import { createContext, ReactNode, useState } from "react";
+import { createContext, ReactNode, useEffect, useReducer, useState } from "react";
+import { addNewCycleAction, interruptCurrentCycleAction, markCurrentCycleAsFinishedAction } from "../reducers/cycles/actions";
+import { Cycle, cyclesReducers } from "../reducers/cycles/reducer";
 
 interface CreateCycleData {
 task: string;
@@ -16,45 +18,47 @@ createNewCycle: (data: CreateCycleData) => void;
 interruptCurrentCycle: () => void;
 }
 
-interface Cycle {
-id: string;
-task: string;
-minutesAmount: number;
-startDate: Date;
-interruptedDate?: Date;
-finishedDate?: Date;
-}
+export const CyclesContext = createContext({} as CyclesContextType);
 
 interface CyclesContextProviderProps {
 children: ReactNode;
 }
 
-export const CyclesContext = createContext({} as CyclesContextType);
-
 export function CyclesContextProvider({
 children,
 }: CyclesContextProviderProps) {
-const [cycles, setCycles] = useState<Cycle[]>([]);
-const [activeCycleId, setActivedCycleId] = useState<string | null>(null);
+
+const [cyclesState, dispatch] = useReducer(cyclesReducers,{
+    cycles:[],
+    activeCycleId:null
+},
+
+()=>{
+    const storageStateAsJSON=localStorage.getItem('@ignite-time:cycles-state-1.0')
+    if(storageStateAsJSON){
+        return JSON.parse(storageStateAsJSON)
+    }
+}
+)
 
 const [amountSecondsPassed, setAmountSecondsPassed] = useState(0);
 
+useEffect(()=>{
+    const stateJSON=JSON.stringify(cyclesState)
+    localStorage.setItem('@ignite-time:cycles-state-1.0',stateJSON)
+},[cyclesState])
+
+
+const {cycles,activeCycleId}=cyclesState
 const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId);
 
+
 function setSecondsPassed(seconds: number) {
-setAmountSecondsPassed(seconds);
+setAmountSecondsPassed(seconds)
 }
 
 function markCurrentCycleAsFinished() {
-setCycles((state) =>
-    state.map((cycle) => {
-    if (cycle.id === activeCycleId) {
-        return { ...cycle, finishedDate: new Date() };
-    } else {
-        return cycle;
-    }
-    })
-);
+    dispatch(markCurrentCycleAsFinishedAction())
 }
 
 function createNewCycle(data: CreateCycleData) {
@@ -67,25 +71,11 @@ const newCycle: Cycle = {
     startDate: new Date(),
 };
 
-setCycles((state) => [...state, newCycle]);
-setActivedCycleId(id);
-setAmountSecondsPassed(0);
-
-//reset();
+dispatch(addNewCycleAction(newCycle))
 }
 
 function interruptCurrentCycle() {
-setCycles((state) =>
-    state.map((cycle) => {
-    if (cycle.id === activeCycleId) {
-        return { ...cycle, interruptedDate: new Date() };
-    } else {
-        
-        return cycle;
-    }
-    })
-);
-setActivedCycleId(null);
+    dispatch(interruptCurrentCycleAction())
 }
 
 return (
